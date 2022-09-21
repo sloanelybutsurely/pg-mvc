@@ -8,7 +8,8 @@ create or replace function app.main(
 ) returns http.response as $$
   select router.run_router(
     router.make_router(
-      router.route('GET', '/', 'controllers.hello')
+      router.route('GET', '/', 'controllers.hello'),
+      router.route('GET', '/cool', 'i_dont_exist')
     ),
     req
   );

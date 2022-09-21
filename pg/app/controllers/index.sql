@@ -6,10 +6,11 @@ begin;
     select http.response(
       status := 200,
       headers := array[
-        http.header('Content-Type', 'text/plain')
+        http.header('Content-Type', 'text/html')
       ],
-      body := 'Hello, World!'
+      body := xmlelement(name html, xmlelement(name body, xmlelement(name h1, 'Hello, World')))::text
     );
   $$ language sql immutable security invoker;
+
 
 commit;

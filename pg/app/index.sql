@@ -15,6 +15,6 @@ begin;
       ),
       req
     );
-  $$ language sql strict volatile security invoker;
+  $$ language sql volatile security invoker;
 
 commit;

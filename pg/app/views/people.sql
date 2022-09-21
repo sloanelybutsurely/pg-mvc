@@ -24,9 +24,9 @@ begin;
           </tr>
         </thead>
         <tbody> ' || (
-          select xmlagg(
+          select coalesce(xmlagg(
             xmlparse (content '<tr><td>' || person.id ||'</td><td>' || person.name || '</td></tr>')
-          ) from unnest(people) person
+          ), xmlcomment('No people')) from unnest(people) person
         ) || '</tbody>
       </table>
     ');
@@ -37,7 +37,7 @@ begin;
   ) returns text as $$
     select templates.main(
       title := 'People',
-      content :=
+      content := 
         xmlparse (content '
           <header>
             <h1>All People</h1>

@@ -14,7 +14,7 @@ begin;
       body := views.people_index(people)
     );
   end
-  $$ language plpgsql strict stable security invoker;
+  $$ language plpgsql stable security invoker;
 
   create or replace function controllers.people_create(
     req http.request
@@ -35,6 +35,6 @@ begin;
       body := views.people_index(people)
     );
   end
-  $$ language plpgsql strict volatile security invoker;
+  $$ language plpgsql volatile security invoker;
 
 commit;

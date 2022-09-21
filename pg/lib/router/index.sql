@@ -17,20 +17,20 @@ begin;
       path,
       controller
     )::router.route;
-  $$ language sql strict immutable security invoker;
+  $$ language sql immutable security invoker;
 
   create or replace function router.make_router(
     variadic routes router.route[]
   ) returns router.route[] as $$
     select routes;
-  $$ language sql strict immutable security invoker;
+  $$ language sql immutable security invoker;
 
   create or replace function router.matches(
     route router.route,
     req http.request
   ) returns boolean as $$
     select route.method = req.method and req.path ~ route.path;
-  $$ language sql strict immutable security invoker;
+  $$ language sql immutable security invoker;
 
   create or replace function router.match(
     router router.route[],
@@ -40,7 +40,7 @@ begin;
     from unnest(router) route
     where router.matches(route, req)
     limit 1;
-  $$ language sql strict immutable security invoker;
+  $$ language sql immutable security invoker;
 
   create or replace function router.run_router(
     router router.route[],

@@ -59,4 +59,4 @@ create or replace function http.status_text(
       when 511 then 'Network Authentication Required'
       else ''
     end;
-$$ language sql strict immutable security invoker;
+$$ language sql immutable security invoker;

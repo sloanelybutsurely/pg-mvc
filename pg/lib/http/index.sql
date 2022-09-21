@@ -21,7 +21,7 @@ begin;
     value text
   ) returns http.header as $$
     select row(name, value)::http.header;
-  $$ language sql strict immutable security invoker; 
+  $$ language sql immutable security invoker; 
 
   select pg_temp.create_type_if_not_exists('http.request',
     ('method', 'http.method'),
@@ -76,7 +76,7 @@ begin;
     header http.header
   ) returns text as $$
     select concat(header.name, ': ', header.value);
-  $$ language sql strict immutable security invoker; 
+  $$ language sql immutable security invoker; 
 
   do $$
   begin
@@ -97,7 +97,7 @@ begin;
       '',
       response.body
     ]) line
-  $$ language sql strict immutable security invoker;
+  $$ language sql immutable security invoker;
 
   select pg_temp.create_type_if_not_exists('http.path',
     ('pathname', 'text'),
@@ -119,7 +119,7 @@ begin;
       (string_to_array(token, '='))[2]
     )
     from unnest(string_to_array(search, '&')) token
-  $$ language sql strict immutable security invoker;
+  $$ language sql immutable security invoker;
 
   create or replace function http.parse_path(
     path text
@@ -133,7 +133,7 @@ begin;
       search_params := http.parse_search(search)
     );
   end
-  $$ language plpgsql strict immutable security invoker;
+  $$ language plpgsql immutable security invoker;
 
   create or replace function http.parse_form_body(
     body text

@@ -29,7 +29,7 @@ begin;
     route router.route,
     req http.request
   ) returns boolean as $$
-    select route.method = req.method and route.path = req.path;
+    select route.method = req.method and req.path ~ route.path;
   $$ language sql strict immutable security invoker;
 
   create or replace function router.match(
@@ -64,6 +64,5 @@ begin;
     end if;
   end
   $$ language plpgsql volatile security invoker;
-
 
 commit;

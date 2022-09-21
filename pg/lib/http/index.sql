@@ -99,4 +99,46 @@ begin;
     ]) line
   $$ language sql strict immutable security invoker;
 
+  select pg_temp.create_type_if_not_exists('http.path',
+    ('pathname', 'text'),
+    ('search_params', 'jsonb')
+  );
+
+  create or replace function http.path(
+    pathname text default '/',
+    search_params jsonb default '{}'
+  ) returns http.path as $$
+    select row(pathname, search_params)::http.path;
+  $$ language sql immutable security invoker;
+
+  create or replace function http.parse_search(
+    search text
+  ) returns jsonb as $$
+    select jsonb_object_agg(
+      (string_to_array(token, '='))[1],
+      (string_to_array(token, '='))[2]
+    )
+    from unnest(string_to_array(search, '&')) token
+  $$ language sql strict immutable security invoker;
+
+  create or replace function http.parse_path(
+    path text
+  ) returns http.path as $$
+  declare
+  pathname text := (string_to_array(path, '?'))[1];
+  search text := (string_to_array(path, '?'))[2];
+  begin
+    return http.path(
+      pathname := pathname,
+      search_params := http.parse_search(search)
+    );
+  end
+  $$ language plpgsql strict immutable security invoker;
+
+  create or replace function http.parse_form_body(
+    body text
+  ) returns jsonb as $$
+    select http.parse_search(body);
+  $$ language sql immutable security invoker;
+
 commit;

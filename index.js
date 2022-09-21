@@ -15,29 +15,39 @@ const server = http
         if (err) {
           return res.status(500).send(err.toString());
         }
-        db.query(
-          `
-          select status, body, to_json(headers) as headers from app.main(
-            http.request(
-              method := $1,
-              path := $2
-            )
-          )`,
-          [req.method, req.url],
-          (err, result) => {
-            if (err) {
-              return res.writeHead(500).end(err.toString());
-            }
-            const {
-              rows: [{ status, body, headers }]
-            } = result;
 
-            const objHeaders = Object.fromEntries(
-              headers.map(({ name, value }) => [name, value])
-            );
-            return res.writeHead(status, objHeaders).end(body);
-          }
-        );
+        let body = "";
+
+        req.on("data", chunk => {
+          body += chunk;
+        });
+        req.on("end", () => {
+          db.query(
+            `
+            select status, body, to_json(headers) as headers from app.main(
+              http.request(
+                method := $1,
+                path := $2,
+                body := $3
+              )
+            )`,
+            [req.method, req.url, body],
+            (err, result) => {
+              if (err) {
+                return res.writeHead(500).end(err.toString());
+              }
+              const {
+                rows: [{ status, body, headers }]
+              } = result;
+
+              const objHeaders = Object.fromEntries(
+                headers.map(({ name, value }) => [name, value])
+              );
+              return res.writeHead(status, objHeaders).end(body);
+            }
+          );
+        });
+        req.read();
       } finally {
         release();
       }

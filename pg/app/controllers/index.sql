@@ -1,3 +1,5 @@
+\include_relative people.sql
+
 begin;
 
   create or replace function controllers.hello(
@@ -8,9 +10,10 @@ begin;
       headers := array[
         http.header('Content-Type', 'text/html')
       ],
-      body := xmlelement(name html, xmlelement(name body, xmlelement(name h1, 'Hello, World')))::text
+      body := views.hello(
+        greetee := coalesce((http.parse_path(req.path)).search_params->>'name', 'World')
+      )::text
     );
   $$ language sql immutable security invoker;
-
 
 commit;

@@ -1,6 +1,6 @@
-\include_relative people.sql
-
 begin;
+
+  create schema if not exists controllers;
 
   create or replace function controllers.hello(
     req http.request
@@ -17,3 +17,5 @@ begin;
   $$ language sql immutable security invoker;
 
 commit;
+
+\include_relative people.sql

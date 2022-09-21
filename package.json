@@ -5,7 +5,7 @@
   "author": "Zach Perrault",
   "license": "MIT",
   "scripts": {
-    "migrate": "psql -d development -f ./pg/schema.sql"
+    "migrate": "ON_ERROR_STOP=true psql -d development -e -f ./pg/schema.sql"
   },
   "dependencies": {
     "pg": "^8.2.1"

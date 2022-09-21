@@ -1,5 +1,7 @@
 -- create all helper function on `pg_temp` schema and they will be removed after migration
 
+begin;
+
 create type pg_temp.attr as (
   name text,
   type text
@@ -112,3 +114,5 @@ exception when others then
   end loop;
 end
 $$ language plpgsql volatile security invoker;
+
+commit;

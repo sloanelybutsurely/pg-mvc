@@ -20,7 +20,7 @@ begin;
     req http.request
   ) returns http.response as $$
   declare
-  form_values jsonb := http.parse_form_body(req.body);
+  form_values jsonb := body_parser.form_data(req.body);
   people models.people[];
   begin
     insert into models.people (name) values (form_values->>'name');

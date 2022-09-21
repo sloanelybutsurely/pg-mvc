@@ -1,5 +1,4 @@
 \include_relative templates/index.sql
-\include_relative people.sql
 
 
 begin;
@@ -15,3 +14,5 @@ begin;
   $$ language sql immutable security invoker;
 
 commit;
+
+\include_relative people.sql
